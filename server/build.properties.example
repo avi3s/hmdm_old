@@ -1,0 +1,45 @@
+# database settings
+jdbc.url=jdbc:postgresql://localhost:5432/hmdm
+jdbc.driver=org.postgresql.Driver
+jdbc.username=hmdm
+jdbc.password=hmdm
+
+# A path to a directory to store uploaded files
+files.directory=D:/home/launcher/files
+
+# A base URL for deployment of this build
+base.url=http://localhost:9090
+
+# A usage scenario:
+# shared: the application hosts data for multiple customers
+# private: the application hosts the data just for a single customer
+usage.scenario=private
+
+# A hash secret used for validating the device IDs provided by requests
+# from devices
+hash.secret=12345
+
+# An ID of a record in userroles DB table representing an ORG_ADMIN role
+# Do not change this!
+role.orgadmin.id=2
+
+# A path to a root directory for storing plugin files
+plugins.files.directory=/home/launcher/plugins
+
+# A path to a file to be created by the application initializer to signal on initialization completion
+initialization.completion.signal.file=/home/launcher/initialized.txt
+
+# A command for calling the aapt
+aapt.command=aapt
+
+# An URL for the file with configuration for loggers
+log4j.config=file:///log4j-hmdm.xml
+
+# The parameters specific to Photo plugin
+plugin.photo.enable.places=true
+
+# The parameters specific to Device Log plugin
+plugin.devicelog.persistence.config.class=com.hmdm.plugins.devicelog.persistence.postgres.DeviceLogPostgresPersistenceConfiguration
+
+# MQTT notification server local URI
+mqtt.server.uri=localhost:31000

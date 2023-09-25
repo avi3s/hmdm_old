@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~ Headwind MDM: Open Source Android MDM Software
+  ~ https://h-mdm.com
+  ~
+  ~ Copyright (C) 2019 Headwind Solutions LLC (http://h-sms.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
+        logicalFilePath="license.changelog.xml">
+
+
+    <changeSet id="05.09.19-18:00" author="isv" context="license">
+        <comment>Table: licenses</comment>
+        <sql>
+            CREATE TABLE licenses (
+                id SERIAL NOT NULL CONSTRAINT licenses_pr_key PRIMARY KEY,
+                expires BIGINT NOT NULL,
+                deviceLimit INT,
+                apiKey VARCHAR(500) NOT NULL,
+                licenseType VARCHAR(50) NOT NULL
+            );
+        </sql>
+        <rollback>
+            DROP TABLE licenses;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="05.09.19-18:41" author="isv" context="license">
+        <comment>Table: licenseDomains</comment>
+        <sql>
+            CREATE TABLE licenseDomains (
+               id SERIAL NOT NULL CONSTRAINT licenseDomains_pr_key PRIMARY KEY,
+               licenseId BIGINT NOT NULL REFERENCES licenses(id) ON DELETE CASCADE,
+               domain VARCHAR(500) NOT NULL
+            );
+        </sql>
+        <rollback>
+            DROP TABLE licenseDomains;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="09.09.19-10:45" author="isv" context="common">
+        <comment>Constraint,new: license_apikey_unique</comment>
+        <sql>
+            ALTER TABLE licenses ADD CONSTRAINT license_apikey_unique UNIQUE (apiKey);
+        </sql>
+        <rollback>
+            ALTER TABLE licenses DROP CONSTRAINT license_apikey_unique;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="09.09.19-13:19" author="isv" context="license">
+        <comment>Table: licenseValidationLog</comment>
+        <sql>
+            CREATE TABLE licenseValidationLog (
+                id SERIAL NOT NULL CONSTRAINT licenseValidationLog_pr_key PRIMARY KEY,
+                logged TIMESTAMP NOT NULL DEFAULT NOW(),
+                received TIMESTAMP NOT NULL,
+                apiKey VARCHAR(500),
+                request TEXT,
+                errorCode VARCHAR(50),
+                deviceId VARCHAR(100),
+                imei VARCHAR(100),
+                serialNumber VARCHAR(100),
+                deviceCount INT,
+                severity VARCHAR(50) NOT NULL DEFAULT 'INFO'
+            );
+        </sql>
+        <rollback>
+            DROP TABLE licenseValidationLog;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

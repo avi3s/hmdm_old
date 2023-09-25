@@ -1,0 +1,15 @@
+{
+  "plugin.deviceexport.localization.key.name": "Экспорт устройств",
+  "plugin.deviceexport.tab.title": "Экспорт устройств",
+  "plugin.deviceexport.selection": "Экспортировать",
+  "plugin.deviceexport.group.selection": "Выбор группы",
+  "plugin.deviceexport.configuration.selection": "Выбор конфигурации",
+  "plugin.deviceexport.selection.all": "Все",
+  "plugin.deviceexport.selection.group": "Группу",
+  "plugin.deviceexport.selection.configuration": "Конфигурацию",
+  "plugin.deviceexport.exporting": "Генерируется файл экспорта...",
+  "button.plugin.deviceexport.export": "Экспорт",
+  "plugin.deviceexport.selection.file.type": "Тип файла",
+  "plugin.deviceexport.selection.file.type.excel": "Excel",
+  "plugin.deviceexport.selection.file.type.csv": "CSV"
+}

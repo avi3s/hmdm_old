@@ -1,0 +1,10 @@
+{
+  "breadcrumb.plugin.licensing.main": "Licensing",
+  
+  "plugin.licensing.localization.key.name": "License",
+  "plugin.licensing.title": "License",
+  "plugin.licensing.apiKey": "API Key",
+  "plugin.licensing.apiKey.placeholder": "Enter API key",
+
+  "success.plugin.licensing.settings.saved": "Settings saved successfully"
+}

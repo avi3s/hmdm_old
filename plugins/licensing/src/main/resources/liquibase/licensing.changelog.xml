@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~ Headwind MDM: Open Source Android MDM Software
+  ~ https://h-mdm.com
+  ~
+  ~ Copyright (C) 2019 Headwind Solutions LLC (http://h-sms.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
+        logicalFilePath="licensing.changelog.xml">
+
+    <!--
+    The change set IDs MUST start with "plugin-<plugin identifier>" followed by dash symbol ALWAYS.
+    The database object names declared by plugin MUST always start with "plugin_<plugin identifier>" followed by underscore
+    symbol.
+    -->
+
+    <changeSet id="plugin-licensing-10.09.2019-12:11" author="isv" context="common">
+        <comment>Register licensing plugin</comment>
+        <sql>
+            INSERT INTO plugins (
+                identifier, name, description,
+                javascriptModuleFile,
+                functionsViewTemplate,
+                settingsViewTemplate,
+                namelocalizationkey,
+                settingsPermission, functionsPermission, deviceFunctionsPermission
+            )
+            VALUES (
+                'licensing', 'Лицензия', 'Лицензирование устройств',
+                'app/components/plugins/licensing/licensing.module.js',
+                null,
+                'app/components/plugins/licensing/views/settings.html',
+                'plugin.licensing.localization.key.name',
+                'plugin_licensing_access',
+                'plugin_licensing_access',
+                'plugin_licensing_access'
+            );
+        </sql>
+        <rollback>
+            DELETE FROM plugins WHERE identifier = 'licensing';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="plugin-licensing-10.09.2019-12:16" author="isv" context="common">
+        <comment>Permissions for licensing plugin access</comment>
+        <sql>
+            INSERT INTO permissions (name, description) VALUES ('plugin_licensing_access', 'Имеет доступ к лицензированию устройств');
+            INSERT INTO userRolePermissions (roleId, permissionId)
+            SELECT id, currval('permissions_id_seq') FROM userroles WHERE name IN ('Администратор', 'Супер-Администратор');
+        </sql>
+        <rollback>
+            DELETE FROM permissions WHERE name = 'plugin_licensing_access';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="plugin-licensing-10.09.2019-12:19" author="isv" context="common">
+        <comment>Table,new: plugin_licensing_settings</comment>
+        <sql>
+            CREATE TABLE plugin_licensing_settings (
+                id serial NOT NULL CONSTRAINT plugin_licensing_settings_pr_key PRIMARY KEY,
+                customerId INT NOT NULL REFERENCES customers (id) ON DELETE CASCADE,
+                apiKey VARCHAR(500)
+            );
+
+            ALTER TABLE plugin_licensing_settings ADD CONSTRAINT plugin_licensing_settings_customer_unique UNIQUE (customerId);
+        </sql>
+        <rollback>
+            ALTER TABLE plugin_licensing_settings DROP CONSTRAINT plugin_licensing_settings_customer_unique;
+            DROP TABLE plugin_licensing_settings;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="plugin-licensing-22.05.2020-12:47" author="seva" context="common">
+        <comment>Fix user role permissions assuming admin and super-admin have fixed ids</comment>
+        <sql>
+            DELETE FROM userRolePermissions WHERE roleId=1 AND permissionId=(SELECT id FROM permissions WHERE name='plugin_licensing_access');
+            INSERT INTO userRolePermissions VALUES (1, (SELECT id FROM permissions WHERE name='plugin_licensing_access'));
+            DELETE FROM userRolePermissions WHERE roleId=2 AND permissionId=(SELECT id FROM permissions WHERE name='plugin_licensing_access');
+            INSERT INTO userRolePermissions VALUES (2, (SELECT id FROM permissions WHERE name='plugin_licensing_access'));
+
+        </sql>
+        <rollback>
+            DELETE FROM userRolePermissions WHERE roleId=1 AND permissionId=(SELECT id FROM permissions WHERE name='plugin_licensing_access');
+            DELETE FROM userRolePermissions WHERE roleId=2 AND permissionId=(SELECT id FROM permissions WHERE name='plugin_licensing_access');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
