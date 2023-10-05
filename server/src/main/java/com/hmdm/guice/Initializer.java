@@ -64,7 +64,7 @@ public final class Initializer extends GuiceServletContextListener {
         final StringWriter errorOut = new StringWriter();
         PrintWriter errorWriter = new PrintWriter(errorOut);
         try {
-            this.injector = Guice.createInjector(Stage.PRODUCTION, this.getModules());
+            //this.injector = Guice.createInjector(Stage.PRODUCTION, this.getModules());
             success = true;
         } catch (Exception e){
             System.err.println("[HMDM-INITIALIZER]: Unexpected error during injector initialization: " + e);

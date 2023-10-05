@@ -159,4 +159,7 @@ public interface DeviceMapper {
 
     @Select("SELECT id FROM devices")
     List<Integer> getAllDeviceIds();
+
+    @Select("SELECT id, number, lastUpdate FROM devices")
+    List<Device> getAllDevices();
 }

@@ -23,10 +23,9 @@ package com.hmdm.persistence;
 
 import com.google.inject.Inject;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.inject.Injector;
@@ -34,12 +33,11 @@ import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.hmdm.event.DeviceInfoUpdatedEvent;
 import com.hmdm.event.EventService;
-import com.hmdm.persistence.domain.ApplicationSetting;
-import com.hmdm.persistence.domain.DeviceApplication;
+import com.hmdm.persistence.domain.*;
 import com.hmdm.rest.json.DeviceListHook;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mybatis.guice.transactional.Transactional;
-import com.hmdm.persistence.domain.Device;
-import com.hmdm.persistence.domain.DeviceSearchRequest;
 import com.hmdm.persistence.mapper.DeviceMapper;
 import com.hmdm.rest.json.DeviceLookupItem;
 import com.hmdm.rest.json.LookupItem;
@@ -239,5 +237,25 @@ public class DeviceDAO extends AbstractDAO<Device> {
                 device -> this.mapper.updateDeviceDescription(deviceId, newDeviceDescription),
                 SecurityException::onDeviceAccessViolation
         );
+    }
+
+    public List<LeadsDetails> fetchAllDevices() {
+        List<LeadsDetails> leadsDetails = new ArrayList<>();
+        List<Device> devices = this.mapper.getAllDevices();
+        if (CollectionUtils.isNotEmpty(devices)) {
+            devices.stream().forEach(d ->{
+                leadsDetails.add(new LeadsDetails(String.valueOf(d.getId()),
+                        StringUtils.replace(d.getNumber(), "-", "/"),
+                        epochToDateTime(d.getLastUpdate())));
+            });
+        }
+        return leadsDetails;
+    }
+
+    private String epochToDateTime(Long time) {
+
+        Date date = new Date(time);
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(date);
     }
 }

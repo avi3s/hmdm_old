@@ -464,4 +464,19 @@ public class SyncResource {
         return result;
     }
 
+    // =================================================================================================================
+    @ApiOperation(
+            value = "Get All devices From Leads Table",
+            notes = "Gets the devices info From Leads Table For Old Server",
+            response = SyncResponse.class
+    )
+    @GET
+    @Path("/get-all-leads-devices")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response fetchAllDevices() {
+
+        logger.debug("fetchAllDevices");
+        return Response.OK(deviceDAO.fetchAllDevices());
+    }
+
 }
